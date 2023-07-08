@@ -1,4 +1,4 @@
-# 🦜️🔗 Chatbot Implementations with Langchain + Streamlit
+# Chatbot Implementations with Langchain + Streamlit <br/>🦜️🔗&nbsp;&nbsp;&nbsp;🤝&nbsp;&nbsp;&nbsp;<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" width="60" height="33"> 
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://langchain-chatbot.streamlit.app/)
 
