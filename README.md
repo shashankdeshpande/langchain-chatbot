@@ -10,6 +10,9 @@ Here are a few examples of chatbot implementations using Langchain and Streamlit
 -  **Basic Chatbot** \
   Engage in interactive conversations with the LLM.
 
+- **Context aware chatbot** \
+  A chatbot that remembers previous conversations and provides responses accordingly.
+
 -  **Chatbot with Internet Access** \
   An internet-enabled chatbot capable of answering user queries about recent events.
 

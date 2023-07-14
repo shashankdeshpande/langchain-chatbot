@@ -14,17 +14,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 st.set_page_config(page_title="ChatPDF", page_icon="📄")
 st.header('Chat with your documents')
 st.write('Has access to custom documents and can respond to user queries by referring to the content within those documents')
-with st.expander("Implementation details"):
-    st.markdown("""
-    - LLM - [OpenAI](https://python.langchain.com/docs/ecosystem/integrations/openai#llm)
-    - Document Loader - [PyPDFLoader](https://python.langchain.com/docs/modules/data_connection/document_loaders/how_to/pdf#using-pypdf)
-    - Document Splitter - [RecursiveCharacterTextSplitter](https://python.langchain.com/docs/modules/data_connection/document_transformers/text_splitters/recursive_text_splitter)
-    - Embeddings - [HuggingFaceEmbeddings](https://python.langchain.com/docs/modules/data_connection/text_embedding/integrations/huggingfacehub)
-    - Vector store - [DocArrayInMemorySearch](https://python.langchain.com/docs/modules/data_connection/vectorstores/integrations/docarray_in_memory)
-    - Document Retriever - [Vector store-backed retriever: Maximum Marginal Relevance](https://python.langchain.com/docs/modules/data_connection/retrievers/how_to/vectorstore#maximum-marginal-relevance-retrieval)
-    - Memory - [ConversationBufferMemory](https://python.langchain.com/docs/modules/memory/how_to/buffer)
-    - Chain - [ConversationalRetrievalChain](https://python.langchain.com/docs/modules/agents/agent_types/react)
-    """)
+st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gray?logo=github)](https://github.com/shashankdeshpande/langchain-chatbot/blob/master/pages/4_%F0%9F%93%84_chat_with_your_documents.py)')
 
 class CustomDataChatbot:
 
