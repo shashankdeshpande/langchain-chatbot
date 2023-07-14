@@ -12,6 +12,8 @@ def enable_chat_history(func):
             st.session_state["current_page"] = current_page
         if st.session_state["current_page"] != current_page:
             try:
+                st.cache_resource.clear()
+                del st.session_state["current_page"]
                 del st.session_state["messages"]
             except:
                 pass
