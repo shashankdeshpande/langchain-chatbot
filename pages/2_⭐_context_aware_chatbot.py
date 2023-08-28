@@ -11,7 +11,7 @@ st.header('Context aware chatbot')
 st.write('Enhancing Chatbot Interactions through Context Awareness')
 st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gray?logo=github)](https://github.com/shashankdeshpande/langchain-chatbot/blob/master/pages/2_%E2%AD%90_context_aware_chatbot.py)')
 
-class Basic:
+class ContextChatbot:
 
     def __init__(self):
         utils.configure_openai_api_key()
@@ -36,5 +36,5 @@ class Basic:
                 st.session_state.messages.append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":
-    obj = Basic()
+    obj = ContextChatbot()
     obj.main()
