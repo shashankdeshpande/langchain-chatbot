@@ -2,7 +2,7 @@ import utils
 import streamlit as st
 from streaming import StreamHandler
 
-from langchain.llms import OpenAI
+from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 
@@ -20,7 +20,7 @@ class ContextChatbot:
     @st.cache_resource
     def setup_chain(_self):
         memory = ConversationBufferMemory()
-        llm = OpenAI(model_name=_self.openai_model, temperature=0, streaming=True)
+        llm = ChatOpenAI(model_name=_self.openai_model, temperature=0, streaming=True)
         chain = ConversationChain(llm=llm, memory=memory, verbose=True)
         return chain
     
@@ -32,7 +32,11 @@ class ContextChatbot:
             utils.display_msg(user_query, 'user')
             with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
-                response = chain.run(user_query, callbacks=[st_cb])
+                result = chain.invoke(
+                    {"input":user_query},
+                    {"callbacks": [st_cb]}
+                )
+                response = result["response"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":

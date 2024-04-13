@@ -3,16 +3,16 @@ import utils
 import streamlit as st
 from streaming import StreamHandler
 
-from langchain.chat_models import ChatOpenAI
-from langchain.document_loaders import PyPDFLoader
+from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chains import ConversationalRetrievalChain
-from langchain.vectorstores import DocArrayInMemorySearch
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import DocArrayInMemorySearch
 
 st.set_page_config(page_title="ChatPDF", page_icon="📄")
-st.header('Chat with your documents')
+st.header('Chat with your documents (Basic RAG)')
 st.write('Has access to custom documents and can respond to user queries by referring to the content within those documents')
 st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gray?logo=github)](https://github.com/shashankdeshpande/langchain-chatbot/blob/master/pages/4_%F0%9F%93%84_chat_with_your_documents.py)')
 
@@ -49,7 +49,7 @@ class CustomDataChatbot:
         splits = text_splitter.split_documents(docs)
 
         # Create embeddings and store in vectordb
-        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
         vectordb = DocArrayInMemorySearch.from_documents(splits, embeddings)
 
         # Define retriever
@@ -87,7 +87,11 @@ class CustomDataChatbot:
 
             with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
-                response = qa_chain.run(user_query, callbacks=[st_cb])
+                result = qa_chain.invoke(
+                    {"question":user_query},
+                    {"callbacks": [st_cb]}
+                )
+                response = result["answer"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":

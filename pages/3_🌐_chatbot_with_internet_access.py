@@ -1,11 +1,12 @@
 import utils
 import streamlit as st
 
-from langchain.agents import AgentType
-from langchain.chat_models import ChatOpenAI
-from langchain.tools import DuckDuckGoSearchRun
-from langchain.agents import initialize_agent, Tool
-from langchain.callbacks import StreamlitCallbackHandler
+from langchain import hub
+from langchain_openai import OpenAI
+from langchain.memory import ConversationBufferMemory
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_community.callbacks import StreamlitCallbackHandler
+from langchain.agents import AgentExecutor, Tool, create_react_agent
 
 st.set_page_config(page_title="ChatWeb", page_icon="🌐")
 st.header('Chatbot with Internet Access')
@@ -18,7 +19,8 @@ class ChatbotTools:
         utils.configure_openai_api_key()
         self.openai_model = "gpt-3.5-turbo"
 
-    def setup_agent(self):
+    @st.cache_resource(show_spinner='Connecting..')
+    def setup_agent(_self):
         # Define tool
         ddg_search = DuckDuckGoSearchRun()
         tools = [
@@ -29,26 +31,29 @@ class ChatbotTools:
             )
         ]
 
+        # Get the prompt - can modify this
+        prompt = hub.pull("hwchase17/react-chat")
+
         # Setup LLM and Agent
-        llm = ChatOpenAI(model_name=self.openai_model, streaming=True)
-        agent = initialize_agent(
-            tools=tools,
-            llm=llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            handle_parsing_errors=True,
-            verbose=True
-        )
-        return agent
+        llm = OpenAI(temperature=0, streaming=True)
+        memory = ConversationBufferMemory(memory_key="chat_history")
+        agent = create_react_agent(llm, tools, prompt)
+        agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True)
+        return agent_executor, memory
 
     @utils.enable_chat_history
     def main(self):
-        agent = self.setup_agent()
+        agent_executor, memory = self.setup_agent()
         user_query = st.chat_input(placeholder="Ask me anything!")
         if user_query:
             utils.display_msg(user_query, 'user')
             with st.chat_message("assistant"):
                 st_cb = StreamlitCallbackHandler(st.container())
-                response = agent.run(user_query, callbacks=[st_cb])
+                result = agent_executor.invoke(
+                    {"input": user_query, "chat_history": memory.chat_memory.messages},
+                    {"callbacks": [st_cb]}
+                )
+                response = result["output"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.write(response)
 
