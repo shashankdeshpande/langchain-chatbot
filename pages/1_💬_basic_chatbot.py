@@ -13,8 +13,7 @@ st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gr
 class Basic:
 
     def __init__(self):
-        utils.configure_openai_api_key()
-        self.openai_model = "gpt-3.5-turbo"
+        self.openai_model = utils.configure_openai()
     
     def setup_chain(self):
         llm = ChatOpenAI(model_name=self.openai_model, temperature=0, streaming=True)
