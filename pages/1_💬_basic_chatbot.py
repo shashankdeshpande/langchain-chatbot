@@ -10,7 +10,7 @@ st.header('Basic Chatbot')
 st.write('Allows users to interact with the LLM')
 st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gray?logo=github)](https://github.com/shashankdeshpande/langchain-chatbot/blob/master/pages/1_%F0%9F%92%AC_basic_chatbot.py)')
 
-class Basic:
+class BasicChatbot:
 
     def __init__(self):
         self.openai_model = utils.configure_openai()
@@ -36,5 +36,5 @@ class Basic:
                 st.session_state.messages.append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":
-    obj = Basic()
+    obj = BasicChatbot()
     obj.main()

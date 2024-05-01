@@ -42,7 +42,7 @@ class CustomDataChatbot:
         
         # Split documents
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1500,
+            chunk_size=1000,
             chunk_overlap=200
         )
         splits = text_splitter.split_documents(docs)
@@ -60,12 +60,19 @@ class CustomDataChatbot:
         # Setup memory for contextual conversation        
         memory = ConversationBufferMemory(
             memory_key='chat_history',
+            output_key='answer',
             return_messages=True
         )
 
         # Setup LLM and QA chain
         llm = ChatOpenAI(model_name=self.openai_model, temperature=0, streaming=True)
-        qa_chain = ConversationalRetrievalChain.from_llm(llm, retriever=retriever, memory=memory, verbose=True)
+        qa_chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            retriever=retriever,
+            memory=memory,
+            return_source_documents=True,
+            verbose=True
+        )
         return qa_chain
 
     @utils.enable_chat_history
@@ -92,6 +99,14 @@ class CustomDataChatbot:
                 )
                 response = result["answer"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
+
+                # to show references
+                for idx, doc in enumerate(result['source_documents'],1):
+                    filename = os.path.basename(doc.metadata['source'])
+                    page_num = doc.metadata['page']
+                    ref_title = f":blue[Reference {idx}: *{filename} - page.{page_num}*]"
+                    with st.popover(ref_title):
+                        st.caption(doc.page_content)
 
 if __name__ == "__main__":
     obj = CustomDataChatbot()
