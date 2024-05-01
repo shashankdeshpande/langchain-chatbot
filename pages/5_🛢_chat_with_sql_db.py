@@ -67,7 +67,7 @@ class SqlChatbot:
             db_uri = 'USE_SAMPLE_DB'
         
         if not db_uri:
-            st.error("Please enter database URI to connect to continue!")
+            st.error("Please enter database URI to continue!")
             st.stop()
         
         db = self.setup_db(db_uri)
@@ -81,7 +81,11 @@ class SqlChatbot:
 
             with st.chat_message("assistant"):
                 st_cb = StreamlitCallbackHandler(st.container())
-                response = agent.run(user_query, callbacks=[st_cb])
+                result = agent.invoke(
+                    {"input": user_query},
+                    {"callbacks": [st_cb]}
+                )
+                response = result["output"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.write(response)
 
