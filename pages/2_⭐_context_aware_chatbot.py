@@ -2,7 +2,6 @@ import utils
 import streamlit as st
 from streaming import StreamHandler
 
-from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 
@@ -14,13 +13,13 @@ st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gr
 class ContextChatbot:
 
     def __init__(self):
-        self.openai_model = utils.configure_openai()
+        utils.sync_st_session()
+        self.llm = utils.configure_llm()
     
     @st.cache_resource
     def setup_chain(_self):
         memory = ConversationBufferMemory()
-        llm = ChatOpenAI(model_name=_self.openai_model, temperature=0, streaming=True)
-        chain = ConversationChain(llm=llm, memory=memory, verbose=True)
+        chain = ConversationChain(llm=_self.llm, memory=memory, verbose=True)
         return chain
     
     @utils.enable_chat_history

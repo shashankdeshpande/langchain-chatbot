@@ -2,7 +2,6 @@ import utils
 import streamlit as st
 from streaming import StreamHandler
 
-from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationChain
 
 st.set_page_config(page_title="Chatbot", page_icon="💬")
@@ -13,11 +12,11 @@ st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gr
 class BasicChatbot:
 
     def __init__(self):
-        self.openai_model = utils.configure_openai()
+        utils.sync_st_session()
+        self.llm = utils.configure_llm()
     
     def setup_chain(self):
-        llm = ChatOpenAI(model_name=self.openai_model, temperature=0, streaming=True)
-        chain = ConversationChain(llm=llm, verbose=True)
+        chain = ConversationChain(llm=self.llm, verbose=True)
         return chain
     
     @utils.enable_chat_history

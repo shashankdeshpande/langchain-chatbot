@@ -2,11 +2,12 @@ import utils
 import streamlit as st
 
 from langchain import hub
-from langchain_openai import OpenAI
+from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.callbacks import StreamlitCallbackHandler
-from langchain.agents import AgentExecutor, Tool, create_react_agent
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_core.tools import Tool
 
 st.set_page_config(page_title="ChatWeb", page_icon="🌐")
 st.header('Chatbot with Internet Access')
@@ -16,7 +17,8 @@ st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gr
 class InternetChatbot:
 
     def __init__(self):
-        self.openai_model = utils.configure_openai()
+        utils.sync_st_session()
+        self.llm = utils.configure_llm()
 
     @st.cache_resource(show_spinner='Connecting..')
     def setup_agent(_self):
@@ -34,9 +36,8 @@ class InternetChatbot:
         prompt = hub.pull("hwchase17/react-chat")
 
         # Setup LLM and Agent
-        llm = OpenAI(temperature=0, streaming=True)
         memory = ConversationBufferMemory(memory_key="chat_history")
-        agent = create_react_agent(llm, tools, prompt)
+        agent = create_react_agent(_self.llm, tools, prompt)
         agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True)
         return agent_executor, memory
 

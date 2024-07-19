@@ -8,8 +8,8 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import DocArrayInMemorySearch
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 st.set_page_config(page_title="ChatPDF", page_icon="📄")
 st.header('Chat with your documents (Basic RAG)')
@@ -19,7 +19,8 @@ st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gr
 class CustomDataChatbot:
 
     def __init__(self):
-        self.openai_model = utils.configure_openai()
+        utils.sync_st_session()
+        self.llm = utils.configure_llm()
 
     def save_file(self, file):
         folder = 'tmp'
@@ -65,9 +66,8 @@ class CustomDataChatbot:
         )
 
         # Setup LLM and QA chain
-        llm = ChatOpenAI(model_name=self.openai_model, temperature=0, streaming=True)
         qa_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm,
+            llm=self.llm,
             retriever=retriever,
             memory=memory,
             return_source_documents=True,

@@ -17,7 +17,8 @@ st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gr
 class SqlChatbot:
 
     def __init__(self):
-        self.openai_model = utils.configure_openai()
+        utils.sync_st_session()
+        self.llm = utils.configure_llm()
     
     def setup_db(_self, db_uri):
         if db_uri == 'USE_SAMPLE_DB':
@@ -33,10 +34,8 @@ class SqlChatbot:
         return db
     
     def setup_sql_agent(_self, db):
-        llm = ChatOpenAI(model_name=_self.openai_model, temperature=0, streaming=True)
-
         agent = create_sql_agent(
-            llm=llm,
+            llm=_self.llm,
             db=db,
             top_k=10,
             verbose=True,
