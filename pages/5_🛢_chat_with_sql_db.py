@@ -4,7 +4,6 @@ import streamlit as st
 from pathlib import Path
 from sqlalchemy import create_engine
 
-from langchain_openai import ChatOpenAI
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.callbacks import StreamlitCallbackHandler
 from langchain_community.utilities.sql_database import SQLDatabase

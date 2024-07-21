@@ -22,6 +22,7 @@ Leveraging the power of Langchain, the creation of chatbots becomes effortless. 
 - **Chatbot with Internet Access**: An internet-enabled chatbot capable of answering user queries about recent events.
 - **Chat with your documents**: Empower the chatbot with the ability to access custom documents, enabling it to provide answers to user queries based on the referenced information.
 - **Chat with SQL database**: Enable the chatbot to interact with a SQL database through simple, conversational commands.
+- **Chat with Websites**: Enable the chatbot to interact with website contents.
 
 To explore sample usage of each chatbot, please navigate to the corresponding chatbot section.
 """)

@@ -10,3 +10,4 @@ duckduckgo-search==6.2.1
 pypdf==4.3.0
 sentence-transformers==3.0.1
 docarray==0.40.0
+validators==0.33.0
