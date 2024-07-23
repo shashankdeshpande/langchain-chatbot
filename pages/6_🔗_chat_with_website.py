@@ -39,7 +39,7 @@ class ChatbotWeb:
             traceback.print_exc()
         return content
 
-    @st.cache_resource(show_spinner='Analyzing webpage', ttl=3600)
+    # @st.cache_resource(show_spinner='Analyzing webpage', ttl=3600)
     def setup_vectordb(_self, websites):
         # Scrape and load documents
         docs = []

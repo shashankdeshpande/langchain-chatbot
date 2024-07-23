@@ -20,7 +20,7 @@ class InternetChatbot:
         utils.sync_st_session()
         self.llm = utils.configure_llm()
 
-    @st.cache_resource(show_spinner='Connecting..')
+    # @st.cache_resource(show_spinner='Connecting..')
     def setup_agent(_self):
         # Define tool
         ddg_search = DuckDuckGoSearchRun()
