@@ -6,9 +6,10 @@ from streaming import StreamHandler
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+
 
 st.set_page_config(page_title="ChatPDF", page_icon="📄")
 st.header('Chat with your documents (Basic RAG)')
@@ -48,7 +49,7 @@ class CustomDataChatbot:
         splits = text_splitter.split_documents(docs)
 
         # Create embeddings and store in vectordb
-        embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+        embeddings = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
         vectordb = DocArrayInMemorySearch.from_documents(splits, embeddings)
 
         # Define retriever

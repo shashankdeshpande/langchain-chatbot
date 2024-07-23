@@ -10,9 +10,9 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 
 from langchain_core.documents.base import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import DocArrayInMemorySearch
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
 st.set_page_config(page_title="ChatWebsite", page_icon="🔗")
 st.header('Chat with Website')
@@ -58,7 +58,7 @@ class ChatbotWeb:
         splits = text_splitter.split_documents(docs)
 
         # Create embeddings and store in vectordb
-        embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+        embeddings = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
         vectordb = DocArrayInMemorySearch.from_documents(splits, embeddings)
         return vectordb
 
