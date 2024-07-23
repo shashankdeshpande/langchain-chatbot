@@ -37,5 +37,14 @@ You can access this app through this link: [langchain-chatbot.streamlit.app](htt
 $ streamlit run Home.py
 ```
 
+## 📦 Running with Docker
+```shell
+# To generate image
+$ docker build -t langchain-chatbot .
+
+# To run the docker container
+$ docker run -p 8501:8501 langchain-chatbot
+```
+
 ## 💁 Contributing
 Planning to add more chatbot examples over time. PRs are welcome.
