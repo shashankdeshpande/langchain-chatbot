@@ -4,6 +4,7 @@ import streamlit as st
 from datetime import datetime
 from langchain_openai import ChatOpenAI
 from langchain_community.chat_models import ChatOllama
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
 #decorator
 def enable_chat_history(func):
@@ -90,6 +91,15 @@ def configure_llm():
         model, openai_api_key = choose_custom_openai_key()
         llm = ChatOpenAI(model_name=model, temperature=0, streaming=True, api_key=openai_api_key)
     return llm
+
+def print_qa(cls, question, answer):
+    log_str = "Usecase: {}\nQuestion: {}\nAnswer: {}\n" + "------"*10
+    print(log_str.format(cls.__name__, question, answer))
+
+@st.cache_resource
+def configure_embedding_model():
+    embedding_model = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+    return embedding_model
 
 def sync_st_session():
     for k, v in st.session_state.items():

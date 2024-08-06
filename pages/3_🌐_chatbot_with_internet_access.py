@@ -38,7 +38,7 @@ class InternetChatbot:
         # Setup LLM and Agent
         memory = ConversationBufferMemory(memory_key="chat_history")
         agent = create_react_agent(_self.llm, tools, prompt)
-        agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True)
+        agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=False)
         return agent_executor, memory
 
     @utils.enable_chat_history
@@ -56,6 +56,8 @@ class InternetChatbot:
                 response = result["output"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.write(response)
+                utils.print_qa(InternetChatbot, user_query, response)
+
 
 if __name__ == "__main__":
     obj = InternetChatbot()

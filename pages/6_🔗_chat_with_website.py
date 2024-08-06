@@ -12,7 +12,6 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain_core.documents.base import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import DocArrayInMemorySearch
-from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
 st.set_page_config(page_title="ChatWebsite", page_icon="🔗")
 st.header('Chat with Website')
@@ -24,6 +23,7 @@ class ChatbotWeb:
     def __init__(self):
         utils.sync_st_session()
         self.llm = utils.configure_llm()
+        self.embedding_model = utils.configure_embedding_model()
 
     def scrape_website(self, url):
         content = ""
@@ -39,7 +39,7 @@ class ChatbotWeb:
             traceback.print_exc()
         return content
 
-    # @st.cache_resource(show_spinner='Analyzing webpage', ttl=3600)
+    @st.cache_resource(show_spinner='Analyzing webpage', ttl=3600)
     def setup_vectordb(_self, websites):
         # Scrape and load documents
         docs = []
@@ -50,16 +50,13 @@ class ChatbotWeb:
                 )
             )
 
-        # Split documents
+        # Split documents and store in vector db
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=200
         )
         splits = text_splitter.split_documents(docs)
-
-        # Create embeddings and store in vectordb
-        embeddings = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
-        vectordb = DocArrayInMemorySearch.from_documents(splits, embeddings)
+        vectordb = DocArrayInMemorySearch.from_documents(splits, _self.embedding_model)
         return vectordb
 
     def setup_qa_chain(self, vectordb):
@@ -83,7 +80,7 @@ class ChatbotWeb:
             retriever=retriever,
             memory=memory,
             return_source_documents=True,
-            verbose=True
+            verbose=False
         )
         return qa_chain
 
@@ -132,6 +129,7 @@ class ChatbotWeb:
                     )
                     response = result["answer"]
                     st.session_state.messages.append({"role": "assistant", "content": response})
+                    utils.print_qa(ChatbotWeb, user_query, response)
 
                     # to show references
                     for idx, doc in enumerate(result['source_documents'],1):
@@ -139,6 +137,7 @@ class ChatbotWeb:
                         ref_title = f":blue[Reference {idx}: *{url}*]"
                         with st.popover(ref_title):
                             st.caption(doc.page_content)
+                    
 
 if __name__ == "__main__":
     obj = ChatbotWeb()

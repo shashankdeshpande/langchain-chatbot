@@ -19,7 +19,7 @@ class ContextChatbot:
     @st.cache_resource
     def setup_chain(_self):
         memory = ConversationBufferMemory()
-        chain = ConversationChain(llm=_self.llm, memory=memory, verbose=True)
+        chain = ConversationChain(llm=_self.llm, memory=memory, verbose=False)
         return chain
     
     @utils.enable_chat_history
@@ -36,6 +36,7 @@ class ContextChatbot:
                 )
                 response = result["response"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
+                utils.print_qa(ContextChatbot, user_query, response)
 
 if __name__ == "__main__":
     obj = ContextChatbot()

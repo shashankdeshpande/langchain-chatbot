@@ -37,7 +37,7 @@ class SqlChatbot:
             llm=_self.llm,
             db=db,
             top_k=10,
-            verbose=True,
+            verbose=False,
             agent_type="openai-tools",
             handle_parsing_errors=True,
             handle_sql_errors=True
@@ -86,6 +86,8 @@ class SqlChatbot:
                 response = result["output"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.write(response)
+                utils.print_qa(SqlChatbot, user_query, response)
+
 
 if __name__ == "__main__":
     obj = SqlChatbot()

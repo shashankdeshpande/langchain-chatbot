@@ -8,7 +8,6 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
 
 st.set_page_config(page_title="ChatPDF", page_icon="📄")
@@ -16,11 +15,12 @@ st.header('Chat with your documents (Basic RAG)')
 st.write('Has access to custom documents and can respond to user queries by referring to the content within those documents')
 st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gray?logo=github)](https://github.com/shashankdeshpande/langchain-chatbot/blob/master/pages/4_%F0%9F%93%84_chat_with_your_documents.py)')
 
-class CustomDataChatbot:
+class CustomDocChatbot:
 
     def __init__(self):
         utils.sync_st_session()
         self.llm = utils.configure_llm()
+        self.embedding_model = utils.configure_embedding_model()
 
     def save_file(self, file):
         folder = 'tmp'
@@ -41,16 +41,13 @@ class CustomDataChatbot:
             loader = PyPDFLoader(file_path)
             docs.extend(loader.load())
         
-        # Split documents
+        # Split documents and store in vector db
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=200
         )
         splits = text_splitter.split_documents(docs)
-
-        # Create embeddings and store in vectordb
-        embeddings = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
-        vectordb = DocArrayInMemorySearch.from_documents(splits, embeddings)
+        vectordb = DocArrayInMemorySearch.from_documents(splits, self.embedding_model)
 
         # Define retriever
         retriever = vectordb.as_retriever(
@@ -71,7 +68,7 @@ class CustomDataChatbot:
             retriever=retriever,
             memory=memory,
             return_source_documents=True,
-            verbose=True
+            verbose=False
         )
         return qa_chain
 
@@ -99,6 +96,7 @@ class CustomDataChatbot:
                 )
                 response = result["answer"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
+                utils.print_qa(CustomDocChatbot, user_query, response)
 
                 # to show references
                 for idx, doc in enumerate(result['source_documents'],1):
@@ -109,5 +107,5 @@ class CustomDataChatbot:
                         st.caption(doc.page_content)
 
 if __name__ == "__main__":
-    obj = CustomDataChatbot()
+    obj = CustomDocChatbot()
     obj.main()

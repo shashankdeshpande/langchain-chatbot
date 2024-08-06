@@ -16,7 +16,7 @@ class BasicChatbot:
         self.llm = utils.configure_llm()
     
     def setup_chain(self):
-        chain = ConversationChain(llm=self.llm, verbose=True)
+        chain = ConversationChain(llm=self.llm, verbose=False)
         return chain
     
     @utils.enable_chat_history
@@ -33,6 +33,7 @@ class BasicChatbot:
                 )
                 response = result["response"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
+                utils.print_qa(BasicChatbot, user_query, response)
 
 if __name__ == "__main__":
     obj = BasicChatbot()
