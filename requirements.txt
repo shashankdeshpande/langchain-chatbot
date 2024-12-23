@@ -1,4 +1,5 @@
 langchain==0.3.13
+langchainhub==0.1.21
 langchain_community==0.3.13
 langchain_core==0.3.28
 langchain_openai==0.2.14
@@ -8,3 +9,6 @@ Requests==2.32.3
 SQLAlchemy==2.0.36
 streamlit==1.41.1
 validators==0.34.0
+fastembed==0.4.2
+pypdf==5.1.0
+duckduckgo_search==7.0.1
