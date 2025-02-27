@@ -11,7 +11,7 @@ logger = get_logger('Langchain-Chatbot')
 
 #decorator
 def enable_chat_history(func):
-    if os.environ.get("OPENAI_API_KEY"):
+    if os.environ.get("OPENAI_API_KEY") or True:
 
         # to clear chat history after swtching chatbot
         current_page = func.__qualname__
@@ -82,7 +82,7 @@ def configure_llm():
     available_llms = ["gpt-4o-mini","llama3.1:8b","llama3.2:3b","use your openai api key"]
     llm_opt = st.sidebar.radio(
         label="LLM",
-        options=available_llms,
+        options=available_llms[1:],
         key="SELECTED_LLM"
         )
 
