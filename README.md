@@ -1,3 +1,16 @@
+# how2run search-bot
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+python3 -m pip install langchain-chroma langchain-ollama langchain-community
+```
+
+```python
+# create database knowledge
+python3 create_chromadb.py --jsonl data/test.jsonl --collection-name test
+# launch demo
+streamlit run Home.py --server.port 8100
+```
+
 # Chatbot Implementations with Langchain + Streamlit
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/shashankdeshpande/langchain-chatbot?quickstart=1)
