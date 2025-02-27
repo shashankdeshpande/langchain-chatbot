@@ -25,17 +25,23 @@ def normalize_embedding(embedding):
     return embedding / norm if norm > 0 else embedding
 
 
-class RAG:
+class OllamaEmbeddingsL2(OllamaEmbeddings):
+    """Ollama embedding class with L2 normalization to the ollama embeddings"""
     
-    def __init__(self, chromadb_path):
-        self.client = chromadb.PersistentClient(path=chromadb_path)
-        self.collection = self.client.get_collection(name="embeddings")
+    def _normalize_embedding(self, embedding):
+        """Normalize embedding using L2 normalization."""
+        norm = np.linalg.norm(embedding)
+        return embedding / norm if norm > 0 else embedding
 
-    def retrieve_top_k(self, query_text, top_k=5):
-        query_embedding = get_ollama_embedding(query_text)
-        query_embedding = normalize_embedding(query_embedding)
-        results = self.collection.query(query_embeddings=[query_embedding], n_results=top_k)
-        return results["documents"][0] if "documents" in results else []
+    def embed_documents(self, texts):
+        """Embed a batch of documents with L2 normalization."""
+        embeddings = super().embed_documents(texts)
+        return [self._normalize_embedding(embedding) for embedding in embeddings]
+
+    def embed_query(self, text):
+        """Embed a query with L2 normalization."""
+        embedding = super().embed_query(text)
+        return self._normalize_embedding(embedding)
 
 
 class EcommerceAgent:
@@ -47,7 +53,7 @@ class EcommerceAgent:
     
     @st.cache_resource()
     def setup_vectordb(_self,):
-        embeddings = OllamaEmbeddings(model="mxbai-embed-large",)
+        embeddings = OllamaEmbeddingsL2(model="mxbai-embed-large",)
         chroma = Chroma(
             persist_directory="chromadb_store",
             collection_name="embeddings",
